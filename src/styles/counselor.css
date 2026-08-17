@@ -1,0 +1,38 @@
+/* ── Кабинет вожатого (desktop) ────────────────────────────*/
+.counselor { max-width: 980px; margin: 0 auto; padding: 20px 20px 60px; }
+.c-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+.c-head h2 { font-size: 22px; }
+.c-actions { display: flex; gap: 10px; }
+.toast { background: #e8f7ee; color: #1e7a4f; border: 1px solid #b9e4c9; padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; font-weight: 600; }
+.c-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.c-tab {
+  padding: 9px 16px; border-radius: 12px; font-weight: 600; font-size: 14px;
+  background: var(--card); border: 1px solid var(--line); color: var(--ink-soft);
+}
+.c-tab.on { background: var(--accent); color: #fff; border-color: transparent; }
+.c-body { }
+
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.ov-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; }
+.ov-card b { font-size: 28px; color: var(--accent); }
+.ov-card span { color: var(--ink-soft); font-size: 13px; }
+
+.sec h3 { margin-bottom: 14px; font-size: 17px; }
+.row-card {
+  display: flex; align-items: center; gap: 12px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow);
+}
+.row-card div { display: flex; flex-direction: column; flex: 1; }
+.rc-ic { font-size: 26px; }
+
+.c-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+.c-table th { text-align: left; font-size: 12px; text-transform: uppercase; color: var(--ink-dim); padding: 10px 12px; background: var(--bg); }
+.c-table td { padding: 10px 12px; border-top: 1px solid var(--line); font-size: 14px; }
+.grade-cell { display: flex; gap: 6px; }
+.grade-btn {
+  width: 32px; height: 32px; border-radius: 9px; font-weight: 700; font-size: 14px;
+  background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+}
+.grade-btn:hover { background: var(--accent); color: #fff; border-color: transparent; }
+
+.preview-note p { color: var(--ink-soft); margin: 10px 0 16px; }

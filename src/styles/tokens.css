@@ -1,0 +1,13 @@
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --ink: #132245;
+  --ink-soft: #5a6178;
+  --ink-dim: #7b8296;
+  --line: #e7eaf2;
+  --accent: #ed7615;
+  --accent-soft: #fdeede;
+  --radius: 16px;
+  --shadow: 0 6px 24px rgba(19, 34, 69, .08);
+  --font: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+}
