@@ -20,10 +20,15 @@ export default function App() {
   useEffect(() => {
     let alive = true;
     DB.ensureSeed().then(async () => {
-      if (!alive) return;
-      const shifts = await Store.shifts();
-      const act = shifts.find(s => s.status === 'active') || shifts[0] || null;
-      if (alive) { setActiveShift(act); setReady(true); }
+      try {
+        const shifts = await Store.shifts();
+        const act = shifts.find(s => s.status === 'active') || shifts[0] || null;
+        if (alive) setActiveShift(act);
+      } catch (e) {
+        console.warn('Supabase недоступен, показываем пустой старт:', e);
+      } finally {
+        if (alive) setReady(true);
+      }
     });
     return () => { alive = false; };
   }, []);

@@ -59,7 +59,7 @@ create table if not exists missions (
   id          text primary key,
   concept_id  text not null,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   focus       text[] not null default '{}',     -- из 7 составных
   weight      int not null default 2,           -- вес в радаре
   coins       int not null default 20
@@ -69,7 +69,7 @@ create table if not exists quests (
   id          text primary key,
   concept_id  text not null,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   xp          int not null default 200,
   gems        int not null default 10,
   stages      text[] not null default '{}'      -- Идея→Интервью→MVP→Слайд→Защита
@@ -130,7 +130,7 @@ create table if not exists projects (
   shift_id    text not null references shifts(id) on delete cascade,
   student_id  text not null references students(id) on delete cascade,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   stage       int not null default 0,           -- текущая стадия
   stages      text[] not null default '{}',
   grade       int,
@@ -165,6 +165,24 @@ create index if not exists idx_badges_on_student on badges (student_id, shift_id
 create index if not exists idx_projects_on_student on projects (student_id, shift_id);
 create index if not exists idx_sport_on_student on sport_stats (student_id, shift_id);
 
+-- ── RLS отключаем ПРИНУДИТЕЛЬНО (MVP): приложение работает от anon key ──
+-- (Supabase включает RLS по умолчанию для новых таблиц; без policies это
+--  блокирует и чтение, и запись. Отключаем для постоянных таблиц.)
+do $$
+declare t text;
+begin
+  for t in
+    select tablename from pg_tables
+    where schemaname = 'public'
+      and tablename in (
+        'students','clans','shifts','shift_students','missions','quests',
+        'assignments','badges','challenges','projects','sport_stats',
+        'concept_skins','test_results')
+  loop
+    execute format('alter table %I disable row level security', t);
+  end loop;
+end $$;
+
 
 -- АВТОГЕНЕРАЦИЯ из src/lib/demo.js - не править вручную
 
@@ -181,7 +199,7 @@ insert into concept_skins (id, concept_id, emoji, color, skin, currency, quest, 
 ('camp-10', 'camp-10', '🏝️', '#3BA97A', '#1c3a2b', 'Ракушки', 'Эвакуационный совет', 'Team Building & Future Skills')
 on conflict (id) do nothing;
 
-insert into missions (id, concept_id, title, desc, focus, weight, coins) values
+insert into missions (id, concept_id, title, "desc", focus, weight, coins) values
 ('camp-01-m1', 'camp-01', 'Разведка: боевой брифинг на английском', 'Получи боевой брифинг «Битва с Боссом». Держи опорные фразы на английском.', ARRAY['edutainment', 'english', 'futureskills'], 2, 20),
 ('camp-01-m2', 'camp-01', '⚡ Сбор легенды смены', 'Расскажи своей команде легенду «Кибер-Атлеты» своими словами — вожатый оценит.', ARRAY['edutainment', 'futureskills', 'professions'], 2, 20),
 ('camp-01-m3', 'camp-01', 'Зарядка будущего: нейрогимнастика', 'Зарядка будущего: нейрогимнастика и координационная лестница.', ARRAY['sport', 'phygital', 'edutainment'], 2, 20),
@@ -304,7 +322,7 @@ insert into missions (id, concept_id, title, desc, focus, weight, coins) values
 ('camp-10-m12', 'camp-10', 'Репетиция защиты', 'Проговори защиту продукта перед «Эвакуационный совет» на английском.', ARRAY['english', 'incubator', 'futureskills'], 2, 20)
 on conflict (id) do nothing;
 
-insert into quests (id, concept_id, title, desc, xp, gems, stages) values
+insert into quests (id, concept_id, title, "desc", xp, gems, stages) values
 ('camp-01-q1', 'camp-01', 'Финальный вызов: «Битва с Боссом»', 'Защити продукт команды перед жюри. Оценка 3–5 решает награду.', 200, 10, ARRAY['Идея', 'Интервью', 'MVP', 'Слайд', 'Защита']),
 ('camp-02-q1', 'camp-02', 'Финальный вызов: «Совет директоров Земли»', 'Защити продукт команды перед жюри. Оценка 3–5 решает награду.', 200, 10, ARRAY['Идея', 'Интервью', 'MVP', 'Слайд', 'Защита']),
 ('camp-03-q1', 'camp-03', 'Финальный вызов: «Финальный брифинг»', 'Защити продукт команды перед жюри. Оценка 3–5 решает награду.', 200, 10, ARRAY['Идея', 'Интервью', 'MVP', 'Слайд', 'Защита']),

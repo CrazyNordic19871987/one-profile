@@ -54,7 +54,7 @@ create table if not exists missions (
   id          text primary key,
   concept_id  text not null,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   focus       text[] not null default '{}',     -- из 7 составных
   weight      int not null default 2,           -- вес в радаре
   coins       int not null default 20
@@ -64,7 +64,7 @@ create table if not exists quests (
   id          text primary key,
   concept_id  text not null,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   xp          int not null default 200,
   gems        int not null default 10,
   stages      text[] not null default '{}'      -- Идея→Интервью→MVP→Слайд→Защита
@@ -125,7 +125,7 @@ create table if not exists projects (
   shift_id    text not null references shifts(id) on delete cascade,
   student_id  text not null references students(id) on delete cascade,
   title       text not null,
-  desc        text not null default '',
+  "desc"      text not null default '',
   stage       int not null default 0,           -- текущая стадия
   stages      text[] not null default '{}',
   grade       int,
@@ -159,3 +159,21 @@ create index if not exists idx_assignments_on_student on assignments (student_id
 create index if not exists idx_badges_on_student on badges (student_id, shift_id);
 create index if not exists idx_projects_on_student on projects (student_id, shift_id);
 create index if not exists idx_sport_on_student on sport_stats (student_id, shift_id);
+
+-- ── RLS отключаем ПРИНУДИТЕЛЬНО (MVP): приложение работает от anon key ──
+-- (Supabase включает RLS по умолчанию для новых таблиц; без policies это
+--  блокирует и чтение, и запись. Отключаем для постоянных таблиц.)
+do $$
+declare t text;
+begin
+  for t in
+    select tablename from pg_tables
+    where schemaname = 'public'
+      and tablename in (
+        'students','clans','shifts','shift_students','missions','quests',
+        'assignments','badges','challenges','projects','sport_stats',
+        'concept_skins','test_results')
+  loop
+    execute format('alter table %I disable row level security', t);
+  end loop;
+end $$;
