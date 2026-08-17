@@ -98,7 +98,8 @@ function GradesSec({ dv }) {
     if (!shift) return;
     const existing = (await Store.assignmentsFor(shift.id, sid)).find(a => a.item_type === 'mission' && a.item_id === itemId);
     await DB.upsert('assignments', {
-      id: existing?.id || null, shift_id: shift.id, student_id: sid, item_type: 'mission',
+      id: existing?.id || `asg-${shift.id}-${sid}-${itemId}`,
+      shift_id: shift.id, student_id: sid, item_type: 'mission',
       item_id: itemId, day_date: existing?.day_date || shift.date_from,
       status: grade >= 3 ? 'credited' : 'not_credited', grade
     });

@@ -6,10 +6,15 @@
 import { USE_SUPABASE, SUPABASE_URL, SUPABASE_ANON_KEY, TABLES } from './config.js';
 import { ensureContent } from './demo.js';
 
-let sb = null;
-if (USE_SUPABASE) {
-  const { createClient } = await import('@supabase/supabase-js');
-  sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Клиент создаётся лениво (без top-level await — совместимо с ES2020).
+let sbPromise = null;
+function client() {
+  if (!USE_SUPABASE) return null;
+  if (!sbPromise) {
+    sbPromise = import('@supabase/supabase-js')
+      .then(({ createClient }) => createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
+  }
+  return sbPromise;
 }
 
 const NS = 'one_profile';
@@ -29,7 +34,7 @@ function nextId(table) {
   return `${table}-${(nums.length ? Math.max(...nums) : 0) + 1}`;
 }
 
-async function sbSelect(table, cols = '*', eq) {
+async function sbSelect(sb, table, cols = '*', eq) {
   let q = sb.from(table).select(cols);
   if (eq) for (const [k, v] of Object.entries(eq)) q = q.eq(k, v);
   const { data, error } = await q;
@@ -39,26 +44,26 @@ async function sbSelect(table, cols = '*', eq) {
 
 export const DB = {
   async getAll(table) {
-    if (USE_SUPABASE) return sbSelect(table);
+    if (USE_SUPABASE) return sbSelect(await client(), table);
     return readAll(table);
   },
 
   async find(table, id) {
     if (USE_SUPABASE) {
-      const rows = await sbSelect(table, '*', { id });
+      const rows = await sbSelect(await client(), table, '*', { id });
       return rows[0] || null;
     }
     return readAll(table).find(r => r.id === id) || null;
   },
 
   async where(table, eq) {
-    if (USE_SUPABASE) return sbSelect(table, '*', eq);
+    if (USE_SUPABASE) return sbSelect(await client(), table, '*', eq);
     return readAll(table).filter(r => Object.entries(eq).every(([k, v]) => r[k] === v));
   },
 
   async upsert(table, row) {
     if (USE_SUPABASE) {
-      const { error } = await sb.from(table).upsert(row);
+      const { error } = await (await client()).from(table).upsert(row);
       if (error) throw error;
       return row;
     }
@@ -72,7 +77,7 @@ export const DB = {
 
   async remove(table, id) {
     if (USE_SUPABASE) {
-      const { error } = await sb.from(table).delete().eq('id', id);
+      const { error } = await (await client()).from(table).delete().eq('id', id);
       if (error) throw error;
       return;
     }

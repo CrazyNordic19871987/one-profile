@@ -6,11 +6,10 @@
 
 export const APP_NAME = 'ONE!';
 
-// ── Supabase (создать проект, вставить URL + anon key) ────────
-// USE_SUPABASE=false → демо-режим в localStorage (для быстрого демо)
-export const USE_SUPABASE = false;
-export const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-export const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+// ── Supabase ──────────────────────────────────────────────────
+export const USE_SUPABASE = true;
+export const SUPABASE_URL = 'https://wrvzdonjvislrkeltjer.supabase.co';
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indydnpkb25qdmlzbHJrZWx0amVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5Njk2OTksImV4cCI6MjEwMjU0NTY5OX0.tXTbVJvpg4CJdLoekwUrucrzUJyTdHX6lHgTbmbXE3g';
 
 export const TABLES = {
   STUDENTS: 'students',
